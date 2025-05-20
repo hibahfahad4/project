@@ -1,54 +1,26 @@
-#!/bin/bash
-# This line specifies that the program will be executed by Bash.
-#:File check + user input
-# Filename to check
-DATA_FILE="Data.txt"
-
-# Check if file exists and is readable
-# Check if the file exists
-if [ -e "$DATA_FILE" ]; then
-  # Check if the file is readable
-  if [ -r "$DATA_FILE" ]; then
-    echo "The file is readable."
-  else
-    echo "The file is not readable."
-    exit 1
-  fi
+"entertainment")
+# Determine if the number of adults is greater than 9
+if [ "$adults" -gt 9 ]; then
+group="Adults > 9"
 else
-  echo "The file does not exist."
-  exit 1
+group="Adults ≤ 9"
 fi
 
-# Welcome message
-echo "Welcome to the Travel Recommendation Program :)"
+# Print a message indicating what is being searched for
+echo "Searching for $budget budget destinations for group: $group"
 
-# Ask user for trip goal
-read -p "Enter your travel goal (Education, Entertainment): " goal
-goal_lower=$(echo "$goal" | tr '[:upper:]' '[:lower:]')
+# Flag to indicate whether to print matching lines
+print=0
 
-# Ask user for the number of adults
-read -p "Enter number of adults going on the trip: " adults
+# Read the data file line by line
+while read -r line; do
+# Start printing when the section for the group is found
+echo "$line" | grep -q "## $group" && print=1 && continue
 
-# Validate if the number is correct
-if ! [[ "$adults" =~ ^[0-9]+$ ]]; then
-  echo "Please enter a valid number."
-  exit 1
-fi
 
-# Ask for budget level
-echo "Choose budget level:"
-echo "1) Low"
-echo "2) Medium"
-echo "3) High"
-read -p "Enter option (1-3): " budget_choice
-
-# Convert user input to budget label
-case $budget_choice in
-  1) budget="Low" ;;
-  2) budget="Medium" ;;
-  3) budget="High" ;;
-  *) echo "Invalid budget choice."; exit 1 ;;
-esac
-
-echo "Fetching suggestions for you..."
-echo "--------------------------------"
+# Stop printing if a new section header is found
+echo "$line" | grep -q "##" && print=0
+    
+# If we are in the correct group section and the line is not empty
+if [ $print -eq 1 ] && [ -n "$line" ]; then
+# Extract the budget value from
